@@ -1,4 +1,5 @@
 import { string, trim, length, startsWith, pipe, minLength, maxLength, object} from 'valibot';
+import * as v from "valibot";
 
 const MobileSchema = pipe(
     string(),
@@ -17,4 +18,17 @@ const PasswordSchema = pipe(
 export const SignInSchema = object({
     username: MobileSchema,
     password: PasswordSchema
-})
+});
+
+export const VerificationSchema = v.object({
+  username: v.pipe(
+    v.string(),
+    v.regex(/^09\d{9}$/, "شماره موبایل معتبر نیست")
+  ),
+
+  code: v.pipe(
+    v.string(),
+    v.length(5, "کد تایید باید ۵ رقم باشد"),
+    v.regex(/^\d{5}$/, "کد تایید باید فقط شامل عدد باشد")
+  ),
+});

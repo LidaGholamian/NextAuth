@@ -3,13 +3,13 @@
 import { FC, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-
 import { TextBox } from "@/app/_components/textbox";
 import { Button } from "@/app/_components/button";
 import Phone from "@/app/_assets/phone";
 import Eye from "@/app/_assets/eye";
 import { SignInModel } from "../_types/auth.types";
 import { SignInSchema } from "../_types/auth.schema";
+import { signInAction } from "@/app/_actions/auth-actions";
 
 export const SignInForm: FC = () => {
   const {
@@ -24,7 +24,7 @@ export const SignInForm: FC = () => {
 
   const onSubmit = async (data: SignInModel) => {
     startTransition(async () => {
-      // const response = await signInAction(data);
+      const response = await signInAction(data);
       console.log(data);
     });
   };
@@ -47,7 +47,7 @@ export const SignInForm: FC = () => {
           name={"password"}
           register={register}
           errors={errors}
-          type="number"
+          type="password"
           placeholder="رمز عبور"
           label="رمز عبورت رو وارد کن"
           icon={<Eye />}
