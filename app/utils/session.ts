@@ -1,4 +1,4 @@
-import { JWTPayload, SignJWT } from "jose";
+import { JWTPayload, jwtVerify, SignJWT } from "jose";
 import { UserSession } from "../_types/auth.types";
 
 const JWT_SECRET='RLBy2xVOo5zN4WNykVNZKAL/PHDYwW/EgSCBwxd818Y=';
@@ -8,4 +8,11 @@ export async function encryptSession(session: UserSession): Promise<string>{
     return new SignJWT(session as unknown as JWTPayload)
         .setProtectedHeader({alg:'HS256'})
         .sign(encodedKey)
+}
+
+export async function decryptSession(session: string){
+    const {payload} = await jwtVerify(session, encodedKey, {
+        algorithms: ['HS256']
+    });
+    return payload
 }
