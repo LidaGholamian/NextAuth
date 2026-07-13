@@ -18,13 +18,19 @@ export async function signInAction(model: SignInModel) {
             }
         });
 
-        if (response.ok) {
+        if (!response.ok) {
+        return {
+        isSuccess: false,
+      };
+    }
 
-            const user = await response.json();
-            await setAuthCookieAction(user);
+    const user = await response.json();
 
-            return { isSuccess: true, response: user }
-        }
+    await setAuthCookieAction(user);
+
+    return {
+      isSuccess: true,
+    };
     } catch {
         return { isSuccess: false }
     }

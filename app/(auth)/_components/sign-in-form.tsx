@@ -10,6 +10,7 @@ import Eye from "@/app/_assets/eye";
 import { SignInModel } from "../_types/auth.types";
 import { SignInSchema } from "../_types/auth.schema";
 import { signInAction } from "@/app/_actions/auth-actions";
+import { useSessionStore } from "@/app/_stores/auth.store";
 
 export const SignInForm: FC = () => {
   const {
@@ -21,11 +22,14 @@ export const SignInForm: FC = () => {
   });
 
   const [isPending, startTransition] = useTransition();
+  const updateSession = useSessionStore((state) => state.updateSession);
 
   const onSubmit = async (data: SignInModel) => {
     startTransition(async () => {
       const response = await signInAction(data);
-      console.log(data);
+      if (response.isSuccess) {
+        await updateSession();
+      }
     });
   };
   return (
