@@ -11,6 +11,7 @@ import { SignInModel } from "../_types/auth.types";
 import { SignInSchema } from "../_types/auth.schema";
 import { signInAction } from "@/app/_actions/auth-actions";
 import { useSessionStore } from "@/app/_stores/auth.store";
+import { useRouter } from "next/navigation";
 
 export const SignInForm: FC = () => {
   const {
@@ -22,6 +23,7 @@ export const SignInForm: FC = () => {
   });
 
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const updateSession = useSessionStore((state) => state.updateSession);
 
   const onSubmit = async (data: SignInModel) => {
@@ -29,6 +31,7 @@ export const SignInForm: FC = () => {
       const response = await signInAction(data);
       if (response.isSuccess) {
         await updateSession();
+        router.push("/dashboard/courses");
       }
     });
   };
