@@ -36,6 +36,36 @@ export async function signInAction(model: SignInModel) {
     }
 }
 
+export async function signOutAction(){
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get('clb-session')?.value;
+
+    if (!sessionCookie){
+        return null
+    }
+    const session = await decryptSession(sessionCookie);
+    try {
+        const response = await fetch('https://general-api.classbon.com/api/identity/signout', {
+            method: 'POST',
+            body: JSON.stringify({ sessionID: (session as unknown as UserSession).sessionId }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            cookieStore.delete('clb-session');
+            return {isSuccess : true}
+            // const user = await response.json();
+            // await SetAuthCookieAction(user);
+            // return { isSuccess: true }
+        }
+    } catch {
+        // console.log(err);
+        return { isSuccess: false }
+    }
+
+}
+
 export async function setAuthCookieAction(user: UserResponse ) {
     const decoded = jwtDecode<JWT>(user.accessToken);
 

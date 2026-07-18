@@ -1,13 +1,32 @@
 "use client";
 
+import Image from "next/image";
 import { useSessionStore } from "../_stores/auth.store";
 import { Button } from "./button";
-import Image from "next/image";
-import Link from "next/link";
+import { useTransition } from "react";
+import { signOutAction } from "../_actions/auth-actions";
+import { useRouter } from "next/navigation";
+import { Loading } from "./loading";
 
 export const TopNavigationAccount = () => {
   const status = useSessionStore((state) => state.status);
   const session = useSessionStore((state) => state.session);
+
+  const clearSession = useSessionStore((state) => state.clearSession);
+
+  const router = useRouter();
+
+  const [isPending, startTransition] = useTransition();
+
+  const handleSignOut = () => {
+    startTransition(async () => {
+      const response = await signOutAction();
+      if (response?.isSuccess) {
+        clearSession();
+        router.push("/");
+      }
+    });
+  };
 
   if (status === "loading") {
     return <p></p>;
@@ -25,9 +44,13 @@ export const TopNavigationAccount = () => {
             alt=""
           />
           <p>{session!.fullName}</p>|
-          <Link href={""} className="text-error">
-            خروج
-          </Link>
+          <div onClick={handleSignOut} className="text-error cursor-pointer">
+            {isPending ? (
+              <Loading color="error" size="xs" text="" />
+            ) : (
+              <span className="">خروج</span>
+            )}
+          </div>
         </div>
       ) : (
         <Button variant="outlined" href="/signin">
