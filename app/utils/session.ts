@@ -1,5 +1,6 @@
 import { JWTPayload, jwtVerify, SignJWT } from "jose";
 import { UserSession } from "../_types/auth.types";
+import { cookies } from "next/headers";
 
 const JWT_SECRET='RLBy2xVOo5zN4WNykVNZKAL/PHDYwW/EgSCBwxd818Y=';
 const encodedKey = new TextEncoder().encode(JWT_SECRET);
@@ -15,4 +16,19 @@ export async function decryptSession(session: string){
         algorithms: ['HS256']
     });
     return payload
+}
+
+export async function getSession(): Promise<UserSession | null> {
+    const cookieStore = await cookies();
+    try{
+        const sessionCookie = cookieStore.get('clb-session')?.value;
+        if (!sessionCookie){
+            return null;
+        }
+        const session = await decryptSession(sessionCookie) as unknown as UserSession;
+        return session;
+    }
+    catch{
+        return null;
+    }
 }
