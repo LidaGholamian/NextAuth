@@ -3,7 +3,7 @@ import { Course } from "./_types/courses.types";
 import { getSession } from "@/app/utils/session";
 
 export const getCourses = async (): Promise<Course[]> => {
-    const session = await getSession();
+  const session = await getSession();
   const response = await fetch(
     "https://general-api.classbon.com/api/identity/courses",
     {
